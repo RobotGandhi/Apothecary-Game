@@ -1,0 +1,6 @@
+Changelog
+27/9 2016: Started working on the project.
+28/9 2016: Added error handling. Added buttons (albeit non-clickable). Added a class for items.
+29/9 2016: Added a class for the player as well as for ingredients. Made buttons clickable and futher developed usability for items and ingredients.
+30/9 2016: Started work on the crafting mechanic. Added the possibility to select individual ingredients.
+6/10 2016: Started work on a menu before the crafting menu that will allow the player to choose if they want to go with a recipe or try to experiment. Revised the button detection.
