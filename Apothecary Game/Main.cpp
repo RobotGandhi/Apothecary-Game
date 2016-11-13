@@ -170,7 +170,7 @@ int main(){
 						&& event.mouseMove.y >= returnToMenu.top() && event.mouseMove.y <= returnToMenu.bottom()) {
 						returnToMenu.changeButtonColor(shadedYellow);
 					}
-					else if (event.mouseMove.x >= confirmCrafting.left && event.mouseMove.x <= confirmCrafting.right
+					else if (event.mouseMove.x >= confirmCrafting.left() && event.mouseMove.x <= confirmCrafting.right()
 						&& event.mouseMove.y >= confirmCrafting.top() && event.mouseMove.y <= confirmCrafting.bottom()) {
 						confirmCrafting.changeButtonColor(shadedYellow);
 					}
@@ -210,14 +210,19 @@ int main(){
 			if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 				if (level == 0) {
 					//Takes the player to the Crafting Method Selector.
-					if (event.mouseButton.x >= startCrafting.getButton().getPosition().x && event.mouseButton.x <= startCrafting.getButton().getPosition().x + startCrafting.getButton().getSize().x
-						&& event.mouseButton.y >= startCrafting.getButton().getPosition().y && event.mouseButton.y <= startCrafting.getButton().getPosition().y + startCrafting.getButton().getSize().y) {
+					if (event.mouseButton.x >= startCrafting.left() && event.mouseButton.x <= startCrafting.right()
+						&& event.mouseButton.y >= startCrafting.top() && event.mouseButton.y <= startCrafting.bottom()) {
 						level = 1;
 						levelIndicator.setString("Crafting Method Selector");
 					}
+					//Takes the player to the tavern.
+					else if (event.mouseButton.x >= enterTavern.left() && event.mouseButton.x <= enterTavern.right()
+						&& event.mouseButton.y >= enterTavern.top() && event.mouseButton.y <= enterTavern.bottom()) {
+						//TODO: Implement tavern.
+					}
 					//Takes the player to their shop.
-					else if (event.mouseButton.x >= enterShop.getButton().getPosition().x && event.mouseButton.x <= enterShop.getButton().getPosition().x + enterShop.getButton().getSize().x
-						&& event.mouseButton.y >= enterShop.getButton().getPosition().y && event.mouseButton.y <= enterShop.getButton().getPosition().y + enterShop.getButton().getSize().y) {
+					else if (event.mouseButton.x >= enterShop.left() && event.mouseButton.x <= enterShop.right()
+						&& event.mouseButton.y >= enterShop.top() && event.mouseButton.y <= enterShop.bottom()) {
 						level = 3;
 						levelIndicator.setString("Your Shop");
 						displayShopMoney.setString("The shop currently carries " + to_string(playerShop.getMoney()) + " currency.");
@@ -225,8 +230,8 @@ int main(){
 				}
 				else if (level == 1) {
 					//Takes the player to the experimentation area and sets the lists up.
-					if (event.mouseButton.x >= experiment.getButton().getPosition().x && event.mouseButton.x <= experiment.getButton().getPosition().x + experiment.getButton().getSize().x
-						&& event.mouseButton.y >= experiment.getButton().getPosition().y && event.mouseButton.y <= experiment.getButton().getPosition().y + experiment.getButton().getSize().y) {
+					if (event.mouseButton.x >= experiment.left() && event.mouseButton.x <= experiment.right()
+						&& event.mouseButton.y >= experiment.top() && event.mouseButton.y <= experiment.bottom()) {
 						oldCursorPosition = 0;
 						newCursorPosition = 0;
 						level = 2;
@@ -238,14 +243,14 @@ int main(){
 				}
 				else if (level == 2) {
 					//Takes the player to the main menu.
-					if (event.mouseButton.x >= returnToMenu.getButton().getPosition().x && event.mouseButton.x <= returnToMenu.right()
-						&& event.mouseButton.y >= returnToMenu.getButton().getPosition().y && event.mouseButton.y <= returnToMenu.bottom()) {
+					if (event.mouseButton.x >= returnToMenu.left() && event.mouseButton.x <= returnToMenu.right()
+						&& event.mouseButton.y >= returnToMenu.top() && event.mouseButton.y <= returnToMenu.bottom()) {
 						level = 0;
 						levelIndicator.setString("Main Menu");
 					}
 					//Tries to craft an item with the ingredients that the player has selected. Also makes time pass in the store.
-					else if (event.mouseButton.x >= confirmCrafting.getButton().getPosition().x && event.mouseButton.x <= confirmCrafting.getButton().getPosition().x + confirmCrafting.getButton().getSize().x
-						&& event.mouseButton.y >= confirmCrafting.getButton().getPosition().y && event.mouseButton.y <= confirmCrafting.getButton().getPosition().y + confirmCrafting.getButton().getSize().y) {
+					else if (event.mouseButton.x >= confirmCrafting.left() && event.mouseButton.x <= confirmCrafting.right()
+						&& event.mouseButton.y >= confirmCrafting.top() && event.mouseButton.y <= confirmCrafting.bottom()) {
 						player.attemptCrafting(currentCraftingAttempt);
 						currentCraftingAttempt.clear();
 						playerShop.addProgress();
@@ -253,8 +258,8 @@ int main(){
 				}
 				else if (level == 3) {
 					//Takes the player to an area where they can add items to the store.
-					if (event.mouseButton.x >= startSale.getButton().getPosition().x && event.mouseButton.x <= startSale.getButton().getPosition().x + startSale.getButton().getSize().x
-						&& event.mouseButton.y >= startSale.getButton().getPosition().y && event.mouseButton.y <= startSale.getButton().getPosition().y + startSale.getButton().getSize().y) {
+					if (event.mouseButton.x >= startSale.left() && event.mouseButton.x <= startSale.right()
+						&& event.mouseButton.y >= startSale.top() && event.mouseButton.y <= startSale.bottom()) {
 						oldCursorPosition = 0;
 						newCursorPosition = 0;
 						level = 4;
