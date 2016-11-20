@@ -71,6 +71,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Adventurers.cpp" />
+    <ClCompile Include="Areas.cpp" />
     <ClCompile Include="ErrorHandling.cpp" />
     <ClCompile Include="Ingredients.cpp" />
     <ClCompile Include="InteractableButton.cpp" />
@@ -80,11 +82,17 @@
     <ClCompile Include="Shop.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Adventurers.h" />
+    <ClInclude Include="Areas.h" />
     <ClInclude Include="Ingredients.h" />
     <ClInclude Include="InteractableButton.h" />
     <ClInclude Include="Items.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Shop.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Apothecary Game.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

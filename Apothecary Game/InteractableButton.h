@@ -6,10 +6,13 @@ using namespace sf;
 
 class InteractableButton {
 public:
-	InteractableButton(int a_xSize, int a_ySize, int a_xPos, int a_yPos, string a_label, Font & a_font, Color textBlue, Color buttonYellow);
+	InteractableButton(int a_xSize, int a_ySize, int a_xPos, int a_yPos, string a_label, Font & a_font, Color textDefault, Color buttonDefault, Texture & a_texture);
 
 	void changeButtonColor(Color newColor) {
 		button.setFillColor(newColor);
+	}
+	void changeTextColor(Color newColor) {
+		buttonLabel.setFillColor(newColor);
 	}
 
 	float left() {
@@ -24,6 +27,8 @@ public:
 	float bottom() {
 		return button.getPosition().y + button.getSize().y;
 	}
+
+	bool isOverlapping(int x_pos, int y_pos);
 
 	RectangleShape getButton() {
 		return button;

@@ -2,6 +2,8 @@
 #include <SFML\Graphics.hpp>
 #include <SFML\Main.hpp>
 #include <SFML\Window.hpp>
+#include "Adventurers.h"
+#include "Areas.h"
 #include "Ingredients.h"
 #include "InteractableButton.h"
 #include "Items.h"
@@ -16,6 +18,8 @@ void printError(const char errorMessage[1000]);
 string generateIngredientList(Player player);
 string generateItemList(Player player);
 string generateSaleList(Shop shop);
+string generateAdventurerList(Player player, Areas area);
+string generateAreaList(Player player);
 
 int main(){
 	//Create the seed for the RNG.
@@ -37,60 +41,86 @@ int main(){
 	}
 
 	//Defines the color used when hovering over buttons.
-	Color shadedYellow(101, 94, 0);
-	Color textBlue(89, 25, 255);
-	Color buttonYellow(178, 164, 0);
+	Color buttonShade(101, 94, 0);
+	Color buttonDefault(178, 164, 0);
+	Color textShade(216, 120, 31);
+	Color textDefault(63, 31, 1);
+
+	Texture cursorTexture;
+	if (!cursorTexture.loadFromFile("Blue_Arrow_001.png"))
+		printError("File Blue_Arrow_001.png could not be loaded.");
+	Vector2u textureSize = cursorTexture.getSize();
+	RectangleShape cursor(Vector2f(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)));
+	cursor.setTexture(&cursorTexture);
+
+	Texture regularButtonTexture;
+	if (!regularButtonTexture.loadFromFile("Wooden_Button(200x100).png"))
+		printError("File Wooden_Button(200x100).png could not be loaded.");
+	Texture slimButtonTexture;
+	if (!slimButtonTexture.loadFromFile("Wooden_Button(400x50).png"))
+		printError("File Wooden_Button(400x50).png could not be loaded.");
 
 	//Create shapes that are currently used for buttons.
-	InteractableButton enterShop(200, 100, 1035, 575, "Enter your Shop", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton enterTavern(200, 100, 540, 575, "Enter the Tavern", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton startCrafting(200, 100, 45, 575, "Start Crafting", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton confirmCrafting(200, 100, 1035, 575, "Craft!", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton returnToMenu(200, 100, 45, 575, "Back to Menu", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton experiment(400, 50, 440, 200, "Start experimenting", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton startSale(200, 100, 1035, 575, "Sell an item", fontAntiqua, textBlue, buttonYellow);
-	InteractableButton collectMoney(200, 100, 540, 575, "Collect", fontAntiqua, textBlue, buttonYellow);
-
-	Texture texture;
-	if (!texture.loadFromFile("Blue_Arrow_001.png"))
-		printError("File Blue_Arrow_001.png could not be loaded.");
-	Vector2u textureSize = texture.getSize();
-	RectangleShape cursor(Vector2f(static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)));
-	cursor.setTexture(&texture);
+	InteractableButton enterShop(200, 100, 1035, 575, "Enter your Shop", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton enterTavern(200, 100, 540, 575, "Enter the Tavern", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton startCrafting(200, 100, 45, 575, "Start Crafting", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton confirmCrafting(200, 100, 1035, 575, "Craft!", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton resetCrafting(200, 100, 540, 575, "Return your items", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton returnToMenu(200, 100, 45, 575, "Back to Menu", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton experiment(400, 50, 440, 200, "Start experimenting", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton craftFromRecipe(400, 50, 440, 350, "Craft from a recipe", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton startSale(200, 100, 1035, 575, "Sell an item", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton collectMoney(200, 100, 540, 575, "Collect", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton sendAdventurers(400, 50, 440, 200, "Send out an adventurer", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton spendTime(400, 50, 440, 350, "Spend time in the tavern", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton confirmArea(200, 100, 1035, 575, "Confirm", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton confirmAdventurer(200, 100, 1035, 575, "Confirm", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
 
 	//Creates text instances. If the text is used in multiple levels, the position is set when the level changes.
 	Text ingredientList;
 	ingredientList.setFont(fontAntiqua);
 	ingredientList.setCharacterSize(25);
-	ingredientList.setFillColor(textBlue);
+	ingredientList.setFillColor(textDefault);
 
 	Text itemList;
 	itemList.setFont(fontAntiqua);
 	itemList.setCharacterSize(25);
-	itemList.setFillColor(textBlue);
+	itemList.setFillColor(textDefault);
+
+	Text adventurerList;
+	adventurerList.setFont(fontAntiqua);
+	adventurerList.setCharacterSize(25);
+	adventurerList.setFillColor(textDefault);
+	adventurerList.setPosition(45, 45);
 
 	Text shopItems;
 	shopItems.setFont(fontAntiqua);
 	shopItems.setCharacterSize(25);
-	shopItems.setFillColor(textBlue);
+	shopItems.setFillColor(textDefault);
 	shopItems.setPosition(45, 45);
+	
+	Text areaList;
+	areaList.setFont(fontAntiqua);
+	areaList.setCharacterSize(25);
+	areaList.setFillColor(textDefault);
+	areaList.setPosition(45, 45);
 
 	Text displayMoney;
 	displayMoney.setFont(fontAntiqua);
 	displayMoney.setCharacterSize(25);
-	displayMoney.setFillColor(textBlue);
+	displayMoney.setFillColor(textDefault);
 	displayMoney.setPosition(1000, 10);
 
 	Text displayShopMoney;
 	displayShopMoney.setFont(fontAntiqua);
 	displayShopMoney.setCharacterSize(25);
-	displayShopMoney.setFillColor(textBlue);
+	displayShopMoney.setFillColor(textDefault);
 	displayShopMoney.setPosition(45, 10);
 
 	Text levelIndicator;
 	levelIndicator.setFont(fontAntiqua);
 	levelIndicator.setCharacterSize(25);
-	levelIndicator.setFillColor(textBlue);
+	levelIndicator.setFillColor(textDefault);
 	levelIndicator.setPosition(540, 10);
 
 	//A variable used for checking which screen the player is on.
@@ -120,13 +150,29 @@ int main(){
 	Items lessHealPotion("Lesser Healing Potion", 0, 20, 10, false);
 	Items lessManaPotion("Lesser Mana Potion", 0, 20, 10, false);
 
+	Adventurers temp(0, 0, 0, 0, 0, "DEFAULT", "TEMP");
+	Adventurers mage(1, 10, 10, 50, 50, "Place Holder", "Mage");
+
+	Areas tempArea("DEFAULT", 0);
+	Areas energySprings("Energy Springs", 1);
+
+	Shop playerShop;
+
+	energySprings.addPossibleIngredient(rejuvHerb);
+	energySprings.addPossibleIngredient(energyHerb);
+	energySprings.addPossibleIngredient(pureWater);
+
+	energySprings.addPossibleItem(lessManaPotion);
+
 	player.learnIngredient(rejuvHerb);
 	player.learnIngredient(energyHerb);
 	player.learnIngredient(pureWater);
 
 	player.learnItem(lessHealPotion);
 
-	Shop playerShop;
+	player.recruitAdventurer(mage);
+
+	player.unlockArea(energySprings);
 
 	//Keeps the program open while the window is open.
 	while (mainWindow.isOpen()){
@@ -138,91 +184,112 @@ int main(){
 			//Checks if the mouse is hovering over any buttons and highlights that button.
 			if (event.type == Event::MouseMoved){
 				if (level == 0){
-					if (event.mouseMove.x >= startCrafting.left() && event.mouseMove.x <= startCrafting.right()
-						&& event.mouseMove.y >= startCrafting.top() && event.mouseMove.y <= startCrafting.bottom()) {
-						startCrafting.changeButtonColor(shadedYellow);
+					if (startCrafting.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						startCrafting.changeButtonColor(buttonShade);
+						startCrafting.changeTextColor(textShade);
 					}
-					else if (event.mouseMove.x >= enterTavern.left() && event.mouseMove.x <= enterTavern.right()
-						&& event.mouseMove.y >= enterTavern.top() && event.mouseMove.y <= enterTavern.bottom()) {
-						enterTavern.changeButtonColor(shadedYellow);
+					else if (enterTavern.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						enterTavern.changeButtonColor(buttonShade);
+						enterTavern.changeTextColor(textShade);
 					}
-					else if (event.mouseMove.x >= enterShop.left() && event.mouseMove.x <= enterShop.right()
-						&& event.mouseMove.y >= enterShop.top() && event.mouseMove.y <= enterShop.bottom()) {
-						enterShop.changeButtonColor(shadedYellow);
+					else if (enterShop.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						enterShop.changeButtonColor(buttonShade);
+						enterShop.changeTextColor(textShade);
 					}
 					else{
-						enterShop.changeButtonColor(buttonYellow);
-						enterTavern.changeButtonColor(buttonYellow);
-						startCrafting.changeButtonColor(buttonYellow);
+						enterShop.changeButtonColor(buttonDefault);
+						enterTavern.changeButtonColor(buttonDefault);
+						startCrafting.changeButtonColor(buttonDefault);
+						enterShop.changeTextColor(textDefault);
+						enterTavern.changeTextColor(textDefault);
+						startCrafting.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 1){
-					if (event.mouseMove.x >= experiment.left() && event.mouseMove.x <= experiment.right()
-						&& event.mouseMove.y >= experiment.top() && event.mouseMove.y <= experiment.bottom()) {
-						experiment.changeButtonColor(shadedYellow);
+					if (experiment.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						experiment.changeButtonColor(buttonShade);
+					}
+					else if (craftFromRecipe.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						craftFromRecipe.changeButtonColor(buttonShade);
+					}
+					else if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
 					}
 					else {
-						experiment.changeButtonColor(buttonYellow);
+						experiment.changeButtonColor(buttonDefault);
+						craftFromRecipe.changeButtonColor(buttonDefault);
+						returnToMenu.changeButtonColor(buttonDefault);
 					}
 				}
 				else if (level == 2){
-					if (event.mouseMove.x >= returnToMenu.left() && event.mouseMove.x <= returnToMenu.right()
-						&& event.mouseMove.y >= returnToMenu.top() && event.mouseMove.y <= returnToMenu.bottom()) {
-						returnToMenu.changeButtonColor(shadedYellow);
+					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
 					}
-					else if (event.mouseMove.x >= confirmCrafting.left() && event.mouseMove.x <= confirmCrafting.right()
-						&& event.mouseMove.y >= confirmCrafting.top() && event.mouseMove.y <= confirmCrafting.bottom()) {
-						confirmCrafting.changeButtonColor(shadedYellow);
+					else if ((confirmCrafting.isOverlapping(event.mouseMove.x, event.mouseMove.y))) {
+						confirmCrafting.changeButtonColor(buttonShade);
 					}
 					else {
-						returnToMenu.changeButtonColor(buttonYellow);
-						confirmCrafting.changeButtonColor(buttonYellow);
+						returnToMenu.changeButtonColor(buttonDefault);
+						confirmCrafting.changeButtonColor(buttonDefault);
 					}
 				}
 				else if (level == 3) {
-					if (event.mouseMove.x >= startSale.left() && event.mouseMove.x <= startSale.right()
-						&& event.mouseMove.y >= startCrafting.top() && event.mouseMove.y <= startSale.bottom()) {
-						startSale.changeButtonColor(shadedYellow);
+					if (startSale.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						startSale.changeButtonColor(buttonShade);
 					}
-					else if (event.mouseMove.x >= returnToMenu.left() && event.mouseMove.x <= returnToMenu.right()
-						&& event.mouseMove.y >= returnToMenu.top() && event.mouseMove.y <= returnToMenu.bottom()) {
-						returnToMenu.changeButtonColor(shadedYellow);
+					else if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
 					}
-					else if (event.mouseMove.x >= collectMoney.left() && event.mouseMove.x <= collectMoney.right()
-						&& event.mouseMove.y >= collectMoney.top() && event.mouseMove.y <= collectMoney.bottom()) {
-						collectMoney.changeButtonColor(shadedYellow);
+					else if (collectMoney.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						collectMoney.changeButtonColor(buttonShade);
 					}
 					else {
-						startSale.changeButtonColor(buttonYellow);
-						returnToMenu.changeButtonColor(buttonYellow);
-						collectMoney.changeButtonColor(buttonYellow);
+						startSale.changeButtonColor(buttonDefault);
+						returnToMenu.changeButtonColor(buttonDefault);
+						collectMoney.changeButtonColor(buttonDefault);
 					}
 				}
 				else if (level == 4) {
-					if (event.mouseMove.x >= returnToMenu.left() && event.mouseMove.x <= returnToMenu.right()
-						&& event.mouseMove.y >= returnToMenu.top() && event.mouseMove.y <= returnToMenu.bottom())
-						returnToMenu.changeButtonColor(shadedYellow);
-					else
-						returnToMenu.changeButtonColor(buttonYellow);
+					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
+					}
+					else {
+						returnToMenu.changeButtonColor(buttonDefault);
+					}
+				}
+				else if (level == 5) {
+					if (sendAdventurers.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						sendAdventurers.changeButtonColor(buttonShade);
+					}
+					else {
+						sendAdventurers.changeButtonColor(buttonDefault);
+					}
+				}
+				else if (level == 6) {
+					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
+					}
+					else {
+						returnToMenu.changeButtonColor(buttonDefault);
+					}
 				}
 			}
 			//Checks if the mouse is over a clickable object if the left mouse button is pressed.
 			if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 				if (level == 0) {
 					//Takes the player to the Crafting Method Selector.
-					if (event.mouseButton.x >= startCrafting.left() && event.mouseButton.x <= startCrafting.right()
-						&& event.mouseButton.y >= startCrafting.top() && event.mouseButton.y <= startCrafting.bottom()) {
+					if (startCrafting.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 1;
 						levelIndicator.setString("Crafting Method Selector");
 					}
 					//Takes the player to the tavern.
-					else if (event.mouseButton.x >= enterTavern.left() && event.mouseButton.x <= enterTavern.right()
-						&& event.mouseButton.y >= enterTavern.top() && event.mouseButton.y <= enterTavern.bottom()) {
+					else if (enterTavern.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						//TODO: Implement tavern.
+						level = 5;
+						levelIndicator.setString("The Tavern");
 					}
 					//Takes the player to their shop.
-					else if (event.mouseButton.x >= enterShop.left() && event.mouseButton.x <= enterShop.right()
-						&& event.mouseButton.y >= enterShop.top() && event.mouseButton.y <= enterShop.bottom()) {
+					else if (enterShop.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 3;
 						levelIndicator.setString("Your Shop");
 						displayShopMoney.setString("The shop currently carries " + to_string(playerShop.getMoney()) + " currency.");
@@ -230,8 +297,7 @@ int main(){
 				}
 				else if (level == 1) {
 					//Takes the player to the experimentation area and sets the lists up.
-					if (event.mouseButton.x >= experiment.left() && event.mouseButton.x <= experiment.right()
-						&& event.mouseButton.y >= experiment.top() && event.mouseButton.y <= experiment.bottom()) {
+					if (experiment.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						oldCursorPosition = 0;
 						newCursorPosition = 0;
 						level = 2;
@@ -240,17 +306,31 @@ int main(){
 						itemList.setPosition(500, 75);
 						cursor.setPosition(15, 77.5);
 					}
-				}
-				else if (level == 2) {
 					//Takes the player to the main menu.
-					if (event.mouseButton.x >= returnToMenu.left() && event.mouseButton.x <= returnToMenu.right()
-						&& event.mouseButton.y >= returnToMenu.top() && event.mouseButton.y <= returnToMenu.bottom()) {
+					else if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 0;
 						levelIndicator.setString("Main Menu");
 					}
+				}
+				else if (level == 2) {
+					//Takes the player to the main menu and returns all the ingredients they have selected.
+					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						for each (Ingredients ingredient in currentCraftingAttempt) {
+							player.addIngredientToInventory(ingredient.getName());
+						}
+						currentCraftingAttempt.clear();
+						level = 0;
+						levelIndicator.setString("Main Menu");
+					}
+					//Returns all ingredients the player has already selected to their inventory.
+					else if (resetCrafting.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						for each (Ingredients ingredient in currentCraftingAttempt) {
+							player.addIngredientToInventory(ingredient.getName());
+						}
+						currentCraftingAttempt.clear();
+					}
 					//Tries to craft an item with the ingredients that the player has selected. Also makes time pass in the store.
-					else if (event.mouseButton.x >= confirmCrafting.left() && event.mouseButton.x <= confirmCrafting.right()
-						&& event.mouseButton.y >= confirmCrafting.top() && event.mouseButton.y <= confirmCrafting.bottom()) {
+					else if (confirmCrafting.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						player.attemptCrafting(currentCraftingAttempt);
 						currentCraftingAttempt.clear();
 						playerShop.addProgress();
@@ -258,8 +338,7 @@ int main(){
 				}
 				else if (level == 3) {
 					//Takes the player to an area where they can add items to the store.
-					if (event.mouseButton.x >= startSale.left() && event.mouseButton.x <= startSale.right()
-						&& event.mouseButton.y >= startSale.top() && event.mouseButton.y <= startSale.bottom()) {
+					if (startSale.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						oldCursorPosition = 0;
 						newCursorPosition = 0;
 						level = 4;
@@ -268,14 +347,12 @@ int main(){
 						cursor.setPosition(15, 77.5);
 					}
 					//Takes the player to the main menu.
-					else if (event.mouseButton.x >= returnToMenu.left() && event.mouseButton.x <= returnToMenu.right()
-						&& event.mouseButton.y >= returnToMenu.top() && event.mouseButton.y <= returnToMenu.bottom()) {
+					else if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 0;
 						levelIndicator.setString("Main Menu");
 					}
 					//Adds the money the store is holding to the player's inventory and clears the store.
-					else if (event.mouseButton.x >= collectMoney.left() && event.mouseButton.x <= collectMoney.top()
-						&& event.mouseButton.y >= collectMoney.top() && event.mouseButton.y <= collectMoney.bottom()) {
+					else if (collectMoney.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						player.gainMoney(playerShop.getMoney());
 						playerShop.resetMoney();
 						displayShopMoney.setString("The shop currently carries " + to_string(playerShop.getMoney()) + " currency.");
@@ -283,10 +360,49 @@ int main(){
 				}
 				else if (level == 4) {
 					//Takes the player to the main menu.
-					if (event.mouseButton.x >= returnToMenu.left() && event.mouseButton.x <= returnToMenu.right()
-						&& event.mouseButton.y >= returnToMenu.top() && event.mouseButton.y <= returnToMenu.bottom()) {
+					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 0;
 						levelIndicator.setString("Main Menu");
+					}
+				}
+				else if (level == 5) {
+					//Takes the player to the main menu.
+					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						level = 0;
+						levelIndicator.setString("Main Menu");
+					}
+					//Lets the player choose where to send an adventurer.
+					else if (sendAdventurers.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						oldCursorPosition = 0;
+						newCursorPosition = 0;
+						level = 6;
+						levelIndicator.setString("Area selection");
+						cursor.setPosition(15, 107.5);
+					}
+				}
+				else if (level == 6) {
+					//Takes the player to the main menu.
+					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						level = 0;
+						levelIndicator.setString("Main Menu");
+					}
+					else if (confirmArea.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						oldCursorPosition = 0;
+						newCursorPosition = 0;
+						tempArea = player.getUnlockedAreas().at(newCursorPosition);
+						level = 7;
+						levelIndicator.setString("Adventurer selection");
+						cursor.setPosition(15, 107.5);
+					}
+				}
+				else if (level == 7) {
+					//Takes the player to the main menu.
+					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						level = 0;
+						levelIndicator.setString("Main Menu");
+					}
+					else if (confirmAdventurer.isOverlapping(event.mouseButton.x, event.MouseButton.y)) {
+
 					}
 				}
 			}
@@ -336,19 +452,53 @@ int main(){
 						}
 					}
 				}
+				else if (level == 6) {
+					if (event.key.code == Keyboard::Up) {
+						newCursorPosition--;
+						if (newCursorPosition <= 0)
+							newCursorPosition = 0;
+					}
+					else if (event.key.code == Keyboard::Down) {
+						newCursorPosition++;
+						if (newCursorPosition >= player.getUnlockedAreas().size() - 1) {
+							newCursorPosition = player.getUnlockedAreas().size() - 1;
+						}
+					}
+				}
+				else if (level == 7) {
+					if (event.key.code == Keyboard::Up) {
+						newCursorPosition--;
+						if (newCursorPosition <= 0)
+							newCursorPosition = 0;
+					}
+					else if (event.key.code == Keyboard::Down) {
+						newCursorPosition++;
+						if (newCursorPosition >= player.getRecruitedAdventurers().size() - 1) {
+							newCursorPosition = player.getRecruitedAdventurers().size() - 1;
+						}
+					}
+				}
 			}
 		}
 		//Updates ingredients and items if needed.
 		if (updateIngredient == true){
 			player.updateIngredientInventory(tempIngredient);
 			updateIngredient = false;
+			//Resets the temporary ingredient.
+			tempIngredient.setName("DEFAULT");
+			tempIngredient.setAmount(0);
 		}
 		if (updateItem == true) {
 			player.updateItemInventory(tempItem);
 			updateItem = false;
+			//Resets the temporary item.
+			tempItem.setName("DEFAULT");
+			tempItem.setAmount(0);
+			tempItem.setPrice(0);
+			tempItem.forgetRecipe();
 		}
 		//Updates selection cursor position.
-		if (level == 2){
+		if (level == 2 || level == 4 || level == 6 || level == 7){
 			if (oldCursorPosition < newCursorPosition){
 				oldCursorPosition++;
 				cursor.setPosition(cursor.getPosition().x, cursor.getPosition().y + 30);
@@ -358,28 +508,12 @@ int main(){
 				cursor.setPosition(cursor.getPosition().x, cursor.getPosition().y - 30);
 			}
 		}
-		else if (level == 4) {
-			if (oldCursorPosition < newCursorPosition) {
-				oldCursorPosition++;
-				cursor.setPosition(cursor.getPosition().x, cursor.getPosition().y + 30);
-			}
-			else if (oldCursorPosition > newCursorPosition) {
-				oldCursorPosition--;
-				cursor.setPosition(cursor.getPosition().x, cursor.getPosition().y - 30);
-			}
-		}
-		//Resets the temporary ingredient.
-		tempIngredient.setName("DEFAULT");
-		tempIngredient.setAmount(0);
-		//Resets the temporary item.
-		tempItem.setName("DEFAULT");
-		tempItem.setAmount(0);
-		tempItem.setPrice(0);
-		tempItem.forgetRecipe();
-		//Updates the strings for the texts.
+		//Updates the strings for the HUD/list texts.
 		ingredientList.setString(generateIngredientList(player));
 		itemList.setString(generateItemList(player));
+		adventurerList.setString(generateAdventurerList(player, tempArea));
 		shopItems.setString(generateSaleList(playerShop));
+		areaList.setString(generateAreaList(player));
 		displayMoney.setString("Currency: " + to_string(player.getMoney()));
 		//Clear the window of what it's currently showing, then redraw the objects and display the new frame.
 		mainWindow.clear(Color::Black);
@@ -398,11 +532,17 @@ int main(){
 			//Item creation method selector
 			mainWindow.draw(experiment.getButton());
 			mainWindow.draw(experiment.getLabel());
+			mainWindow.draw(craftFromRecipe.getButton());
+			mainWindow.draw(craftFromRecipe.getLabel());
+			mainWindow.draw(returnToMenu.getButton());
+			mainWindow.draw(returnToMenu.getLabel());
 			break;
 		case 2:
 			//Item creation (experimentation) screen
 			mainWindow.draw(confirmCrafting.getButton());
 			mainWindow.draw(confirmCrafting.getLabel());
+			mainWindow.draw(resetCrafting.getButton());
+			mainWindow.draw(resetCrafting.getLabel());
 			mainWindow.draw(returnToMenu.getButton());
 			mainWindow.draw(returnToMenu.getLabel());
 			mainWindow.draw(cursor);
@@ -414,7 +554,7 @@ int main(){
 			mainWindow.draw(startSale.getButton());
 			mainWindow.draw(startSale.getLabel());
 			mainWindow.draw(collectMoney.getButton());
-			mainWindow.draw(collectMoney.getLabel());
+			mainWindow.draw(collectMoney.getLabel());	
 			mainWindow.draw(returnToMenu.getButton());
 			mainWindow.draw(returnToMenu.getLabel());
 			mainWindow.draw(shopItems);
@@ -428,7 +568,31 @@ int main(){
 			mainWindow.draw(cursor);
 			break;
 		case 5:
-			//The tavern (Hiring adventurers)
+			//The tavern
+			mainWindow.draw(returnToMenu.getButton());
+			mainWindow.draw(returnToMenu.getLabel());
+			mainWindow.draw(sendAdventurers.getButton());
+			mainWindow.draw(sendAdventurers.getLabel());
+			mainWindow.draw(spendTime.getButton());
+			mainWindow.draw(spendTime.getLabel());
+			break;
+		case 6:
+			//Selecting area to send adventurers.
+			mainWindow.draw(returnToMenu.getButton());
+			mainWindow.draw(returnToMenu.getLabel());
+			mainWindow.draw(confirmArea.getButton());
+			mainWindow.draw(confirmArea.getLabel());
+			mainWindow.draw(cursor);
+			mainWindow.draw(areaList);
+			break;
+		case 7:
+			//Selecting adventurer to send.
+			mainWindow.draw(returnToMenu.getButton());
+			mainWindow.draw(returnToMenu.getLabel());
+			mainWindow.draw(confirmAdventurer.getButton());
+			mainWindow.draw(confirmAdventurer.getLabel());
+			mainWindow.draw(adventurerList);
+			mainWindow.draw(cursor);
 			break;
 		default:
 			//Level does not exist
@@ -473,6 +637,28 @@ string generateSaleList(Shop shop) {
 
 	for each(Items item in shop.getShopItems()) {
 		newList += item.getName() + ". " + to_string(item.getAmount()) + " carried for " + to_string(item.getPrice()) + " currency each.\n";
+	}
+	return newList;
+}
+
+string generateAdventurerList(Player player, Areas area) {
+	string newList;
+
+	newList = "What adventurer would you like to send to " + area.getName() + "?\n\n";
+
+	for each(Adventurers adventurer in player.getRecruitedAdventurers()) {
+		newList += adventurer.getName() + ". ATK: " + to_string(adventurer.getAttack()) + ". DEF: " + to_string(adventurer.getDefense()) + ". M.ATK: " + to_string(adventurer.getMagicAttack()) + ". M.DEF: " + to_string(adventurer.getMagicDefense()) + ".\n";
+	}
+	return newList;
+}
+
+string generateAreaList(Player player) {
+	string newList;
+
+	newList = "Where would you like to send your adventurer?\n\n";
+
+	for each (Areas area in player.getUnlockedAreas()) {
+		newList += area.getName() + "\n";
 	}
 	return newList;
 }

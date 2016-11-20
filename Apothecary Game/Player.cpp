@@ -30,6 +30,12 @@ void Player::updateIngredientInventory(Ingredients toUpdate){
 		learnIngredient(toUpdate);
 }
 
+void Player::addIngredientToInventory(string ingredientToAdd){
+	int position = locate(ingredientToAdd);
+
+	knownIngredients.at(position).gainAmount(1);
+}
+
 void Player::attemptCrafting(vector<Ingredients> ingredientsToUse){
 	int position = 0;
 
