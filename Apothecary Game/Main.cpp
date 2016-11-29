@@ -67,14 +67,14 @@ int main(){
 	InteractableButton confirmCrafting(200, 100, 1035, 575, "Craft!", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
 	InteractableButton resetCrafting(200, 100, 540, 575, "Return your items", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
 	InteractableButton returnToMenu(200, 100, 45, 575, "Back to Menu", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
-	InteractableButton experiment(400, 50, 440, 200, "Start experimenting", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
-	InteractableButton craftFromRecipe(400, 50, 440, 350, "Craft from a recipe", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton experiment(400, 50, 440, 225, "Start experimenting", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton craftFromRecipe(400, 50, 440, 375, "Craft from a recipe", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
 	InteractableButton startSale(200, 100, 1035, 575, "Sell an item", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
 	InteractableButton collectMoney(200, 100, 540, 575, "Collect", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
-	InteractableButton sendAdventurers(400, 50, 440, 200, "Send out an adventurer", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
-	InteractableButton spendTime(400, 50, 440, 350, "Spend time in the tavern", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
-	InteractableButton confirmArea(200, 100, 1035, 575, "Confirm", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
-	InteractableButton confirmAdventurer(200, 100, 1035, 575, "Confirm", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton sendAdventurers(400, 50, 440, 150, "Send out an adventurer", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton spendTime(400, 50, 440, 300, "Spend time in the tavern", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
+	InteractableButton confirm(200, 100, 1035, 575, "Confirm", fontAntiqua, textDefault, buttonDefault, regularButtonTexture);
+	InteractableButton collectItems(400, 50, 440, 450, "Collect items", fontAntiqua, textDefault, buttonDefault, slimButtonTexture);
 
 	//Creates text instances. If the text is used in multiple levels, the position is set when the level changes.
 	Text ingredientList;
@@ -135,6 +135,7 @@ int main(){
 	//A bool checking whetever the "Level not loaded" error has already been printed, in order to keep the error log from flooding with the same error.
 	bool levelErrorPrinted = false;
 	//A bool checking if an object needs to be updated.
+	bool updateArea = false;
 	bool updateIngredient = false;
 	bool updateItem = false;
 
@@ -157,6 +158,8 @@ int main(){
 	Areas energySprings("Energy Springs", 1);
 
 	Shop playerShop;
+
+	Tavern tavern;
 
 	energySprings.addPossibleIngredient(rejuvHerb);
 	energySprings.addPossibleIngredient(energyHerb);
@@ -284,7 +287,6 @@ int main(){
 					}
 					//Takes the player to the tavern.
 					else if (enterTavern.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
-						//TODO: Implement tavern.
 						level = 5;
 						levelIndicator.setString("The Tavern");
 					}
@@ -329,11 +331,19 @@ int main(){
 						}
 						currentCraftingAttempt.clear();
 					}
-					//Tries to craft an item with the ingredients that the player has selected. Also makes time pass in the store.
+					//Tries to craft an item with the ingredients that the player has selected. Also makes time pass in the store and for adventurers.
 					else if (confirmCrafting.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						player.attemptCrafting(currentCraftingAttempt);
+						if (currentCraftingAttempt.size() != 0) {
+							playerShop.addProgress();
+							//Currently using finding by name. Might change to something more efficient later.
+							for each (Adventurers adventurer in player.getRecruitedAdventurers()) {
+								if (adventurer.getAssignedArea().getName() != "DEFAULT") {
+									tavern = player.addAdventurerProgress(player.locate(adventurer.getName()), tavern);
+								}
+							}
+						}
 						currentCraftingAttempt.clear();
-						playerShop.addProgress();
 					}
 				}
 				else if (level == 3) {
@@ -379,6 +389,43 @@ int main(){
 						levelIndicator.setString("Area selection");
 						cursor.setPosition(15, 107.5);
 					}
+					else if (collectItems.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						int position = 0;
+						int rejuvHerb = 0;
+						int energyHerb = 0;
+						int pureWater = 0;
+						tavern.displayIngredients();
+						for each (Ingredients ingredient in tavern.getIngredientsHeld()) {
+							if (ingredient.getName() == "Rejuvenation Herbs")
+								rejuvHerb++;
+							else if (ingredient.getName() == "Energy-Filled Herbs")
+								energyHerb++;
+							else if (ingredient.getName() == "Purified Water")
+								pureWater++;
+							else {
+								string errorMessage = "An unknown ingredient was found: " + ingredient.getName();
+								printError(errorMessage.c_str());
+							}
+							cout << "HEy";
+						}
+						if (rejuvHerb != 0) {
+							position = player.locate("Rejuvenation Herbs");
+							if (position != 5000)
+								player.updateIngredientInventory(Ingredients("Rejuvenation Herbs", player.getIngredientInventory().at(position).getAmount() + rejuvHerb));
+							else
+								player.updateIngredientInventory(Ingredients("Rejuvenation Herbs", rejuvHerb));
+							rejuvHerb = 0;
+						}
+						if (energyHerb != 0) {
+							position = player.locate("Energy-Filled Herbs");
+							if (position != 5000)
+								player.updateIngredientInventory(Ingredients("Energy-Filled Herbs", player.getIngredientInventory().at(position).getAmount() + energyHerb));
+							else
+								player.updateIngredientInventory(Ingredients("Energy-Filled Herbs", energyHerb));
+							energyHerb = 0;
+						}
+						cout << "New items: " + to_string(rejuvHerb) + ", " + to_string(energyHerb) + ", " + to_string(pureWater);
+					}
 				}
 				else if (level == 6) {
 					//Takes the player to the main menu.
@@ -386,7 +433,7 @@ int main(){
 						level = 0;
 						levelIndicator.setString("Main Menu");
 					}
-					else if (confirmArea.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+					else if (confirm.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						oldCursorPosition = 0;
 						newCursorPosition = 0;
 						tempArea = player.getUnlockedAreas().at(newCursorPosition);
@@ -401,13 +448,19 @@ int main(){
 						level = 0;
 						levelIndicator.setString("Main Menu");
 					}
-					else if (confirmAdventurer.isOverlapping(event.mouseButton.x, event.MouseButton.y)) {
-
+					else if (confirm.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						if (player.getRecruitedAdventurers().at(newCursorPosition).getAssignedArea().getName() == "DEFAULT") {
+							//Set the adventurer's assigned area to the chosen area.
+							player.updateAdventurerLocation(player.locate(player.getRecruitedAdventurers().at(newCursorPosition).getName()), tempArea);
+							level = 0;
+							levelIndicator.setString("Main Menu");
+							updateArea = true;
+						}
 					}
 				}
 			}
 			//Checks if the player is pressing a button and starts the proper events.
-			if (event.type == Event::KeyPressed){
+			if (event.type == Event::KeyPressed){;
 				if (level == 2){
 					//Allows the player to choose between their ingredients.
 					if (event.key.code == Keyboard::Up){
@@ -446,7 +499,7 @@ int main(){
 					else if (event.key.code == Keyboard::Return) {
 						tempItem = player.getItemInventory().at(newCursorPosition);
 						if (tempItem.getAmount() != 0) {
-							playerShop.stockItem(Items(tempItem.getName(), 1, tempItem.getPrice(), tempItem.getProgress(), tempItem.isRecipeKnown()));
+							playerShop.stockItem(Items(tempItem.getName(), 1, tempItem.getPrice(), tempItem.getThereshold(), tempItem.isRecipeKnown()));
 							tempItem.loseAmount(1);
 							updateItem = true;
 						}
@@ -479,6 +532,10 @@ int main(){
 					}
 				}
 			}
+		}
+		if (updateArea == true) {
+			tempArea.setName("DEFAULT");
+			updateArea = false;
 		}
 		//Updates ingredients and items if needed.
 		if (updateIngredient == true){
@@ -575,13 +632,15 @@ int main(){
 			mainWindow.draw(sendAdventurers.getLabel());
 			mainWindow.draw(spendTime.getButton());
 			mainWindow.draw(spendTime.getLabel());
+			mainWindow.draw(collectItems.getButton());
+			mainWindow.draw(collectItems.getLabel());
 			break;
 		case 6:
 			//Selecting area to send adventurers.
 			mainWindow.draw(returnToMenu.getButton());
 			mainWindow.draw(returnToMenu.getLabel());
-			mainWindow.draw(confirmArea.getButton());
-			mainWindow.draw(confirmArea.getLabel());
+			mainWindow.draw(confirm.getButton());
+			mainWindow.draw(confirm.getLabel());
 			mainWindow.draw(cursor);
 			mainWindow.draw(areaList);
 			break;
@@ -589,8 +648,8 @@ int main(){
 			//Selecting adventurer to send.
 			mainWindow.draw(returnToMenu.getButton());
 			mainWindow.draw(returnToMenu.getLabel());
-			mainWindow.draw(confirmAdventurer.getButton());
-			mainWindow.draw(confirmAdventurer.getLabel());
+			mainWindow.draw(confirm.getButton());
+			mainWindow.draw(confirm.getLabel());
 			mainWindow.draw(adventurerList);
 			mainWindow.draw(cursor);
 			break;
@@ -647,8 +706,12 @@ string generateAdventurerList(Player player, Areas area) {
 	newList = "What adventurer would you like to send to " + area.getName() + "?\n\n";
 
 	for each(Adventurers adventurer in player.getRecruitedAdventurers()) {
-		newList += adventurer.getName() + ". ATK: " + to_string(adventurer.getAttack()) + ". DEF: " + to_string(adventurer.getDefense()) + ". M.ATK: " + to_string(adventurer.getMagicAttack()) + ". M.DEF: " + to_string(adventurer.getMagicDefense()) + ".\n";
+		if (adventurer.getAssignedArea().getName() == "DEFAULT") {
+			newList += adventurer.getName() + ". ATK: " + to_string(adventurer.getAttack()) + ". DEF: " + to_string(adventurer.getDefense()) + ". M.ATK: " + to_string(adventurer.getMagicAttack()) + ". M.DEF: " + to_string(adventurer.getMagicDefense()) + ".\n";
+		}
 	}
+	if (newList == "What adventurer would you like to send to " + area.getName() + "?\n\n")
+		newList += "You don't have any free adventurers!";
 	return newList;
 }
 

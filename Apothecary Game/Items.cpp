@@ -6,6 +6,7 @@ Items::Items(string a_name, int a_startingAmount, int a_salePrice, int a_theresh
 	initialSalePrice = a_salePrice;
 	chosenSalePrice = a_salePrice;
 	saleThereshold = a_thereshold;
+	saleProgress = 0;
 	recipeKnown = a_recipeKnown;
 }
 

@@ -80,6 +80,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shop.cpp" />
+    <ClCompile Include="Tavern.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Adventurers.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shop.h" />
+    <ClInclude Include="Tavern.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Apothecary Game.rc" />

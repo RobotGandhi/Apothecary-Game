@@ -42,6 +42,9 @@
     <ClCompile Include="Areas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tavern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Areas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tavern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

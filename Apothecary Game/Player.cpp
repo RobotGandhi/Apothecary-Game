@@ -30,6 +30,10 @@ void Player::updateIngredientInventory(Ingredients toUpdate){
 		learnIngredient(toUpdate);
 }
 
+void Player::updateAdventurerLocation(int adventurerPosition, Areas newLocation){
+	recruitedAdventurers.at(adventurerPosition).assignArea(newLocation);
+}
+
 void Player::addIngredientToInventory(string ingredientToAdd){
 	int position = locate(ingredientToAdd);
 
@@ -72,19 +76,37 @@ void Player::attemptCrafting(vector<Ingredients> ingredientsToUse){
 }
 
 int Player::locate(string thingToLocate){
+	//Checks if the name can be found in the player's known ingredients.
 	int position = 0;
 	for each (Ingredients ingredient in knownIngredients){
 		if (ingredient.getName() == thingToLocate)
 			return position;
 		position++;
 	}
+	//If no ingredient is found, the program searches through the names of items.
 	position = 0;
 	for each (Items item in knownItems){
 		if (item.getName() == thingToLocate)
 			return position;
 		position++;
 	}
-	//If nothing is found, position returns a set number, serving as an indicator to add the item/ingredient or throw an error message.
-	position = 5000;
-	return position;
+	position = 0;
+	for each (Adventurers adventurer in recruitedAdventurers) {
+		if (adventurer.getName() == thingToLocate) 
+			return position;
+		position++;
+	}
+	for each (Areas area in unlockedAreas) {
+		if (area.getName() == thingToLocate)
+			return position;
+		position++;
+	}
+	//If nothing is found, the function returns a set number, serving as an indicator to add the item/ingredient or throw an error message.
+	return 5000;
+}
+
+Tavern Player::addAdventurerProgress(int adventurerPosition, Tavern tavern) {
+	tavern = recruitedAdventurers.at(adventurerPosition).addProgress(tavern);
+
+	return tavern;
 }

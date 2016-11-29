@@ -10,6 +10,9 @@ class Areas
 public:
 	Areas(string a_name, float a_baseTolerance);
 
+	void setName(string newName) {
+		name = newName;
+	}
 	void addPossibleIngredient(Ingredients newIngredient) {
 		ingredientsToFind.push_back(newIngredient);
 	}

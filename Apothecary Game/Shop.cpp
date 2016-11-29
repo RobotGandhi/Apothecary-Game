@@ -16,7 +16,8 @@ void Shop::addProgress() {
 	vector<int> itemsToDelete;
 	//Add progress to whatever's being sold, then compare it to the given item's thereshold.
 	for each(Items item in itemsOnSale) {
-		item.gainProgress(rand()%3 + 9);
+		int gained = rand() % 4 + 8;
+		item.gainProgress(gained);
 		if (item.getProgress() >= item.getThereshold()) {
 			itemsOnSale.at(locate(item.getName())).loseAmount(1);
 			moneyToCollect += item.getPrice();

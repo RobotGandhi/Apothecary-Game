@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Areas.h"
+#include "Tavern.h"
 
 using namespace std;
 
@@ -10,6 +11,9 @@ public:
 
 	void assignArea(Areas newArea) {
 		assignedArea = newArea;
+	}
+	void gainProgress(int gained) {
+		progress += gained;
 	}
 
 	int getLevel() {
@@ -27,10 +31,22 @@ public:
 	int getMagicDefense() {
 		return magicDefense;
 	}
+	int getProgress() {
+		return progress;
+	}
+	int getTolerance() {
+		return tolerance;
+	}
 
 	string getName() {
 		return name;
 	}
+
+	Areas getAssignedArea() {
+		return assignedArea;
+	}
+
+	Tavern addProgress(Tavern tavern);
 
 private:
 	bool isQuesting = false;
@@ -40,8 +56,9 @@ private:
 	int defense;
 	int magicAttack;
 	int magicDefense;
-
-	float tolerance;
+	int maxCarry = 5;
+	int tolerance = 10; //Change later, milestone id #14
+	int progress;
 
 	string name;
 	string job;

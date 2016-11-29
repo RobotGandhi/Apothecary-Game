@@ -25,6 +25,7 @@ public:
 	}
 	void updateItemInventory(Items toUpdate);
 	void updateIngredientInventory(Ingredients toUpdate);
+	void updateAdventurerLocation(int adventurerPosition, Areas newLocation);
 	void addIngredientToInventory(string ingredientToAdd);
 	void attemptCrafting(vector<Ingredients> ingredientsToUse);
 
@@ -45,6 +46,8 @@ public:
 	vector<Areas> getUnlockedAreas() {
 		return unlockedAreas;
 	}
+
+	Tavern addAdventurerProgress(int adventurerPosition, Tavern tavern);
 private:
 	int money;
 
