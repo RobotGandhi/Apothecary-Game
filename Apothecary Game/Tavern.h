@@ -14,11 +14,8 @@ public:
 	void obtainItem(Items newItem) {
 		itemsHeld.push_back(newItem);
 	}
-	void displayIngredients() {
-		for each (Ingredients ingredient in ingredientsHeld){
-			cout << ingredient.getName().c_str();
-		}
-	}
+	void deleteIngredients(string toDelete);
+	void deleteItems(string toDelete);
 
 	vector<Ingredients> getIngredientsHeld(){
 		return ingredientsHeld;

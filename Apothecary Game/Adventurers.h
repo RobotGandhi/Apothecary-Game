@@ -15,6 +15,9 @@ public:
 	void gainProgress(int gained) {
 		progress += gained;
 	}
+	void resetProgress() {
+		progress = 0;
+	}
 
 	int getLevel() {
 		return level;

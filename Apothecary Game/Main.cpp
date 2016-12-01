@@ -135,6 +135,7 @@ int main(){
 	//A bool checking whetever the "Level not loaded" error has already been printed, in order to keep the error log from flooding with the same error.
 	bool levelErrorPrinted = false;
 	//A bool checking if an object needs to be updated.
+	bool recheckTavern = false;
 	bool updateArea = false;
 	bool updateIngredient = false;
 	bool updateItem = false;
@@ -153,6 +154,7 @@ int main(){
 
 	Adventurers temp(0, 0, 0, 0, 0, "DEFAULT", "TEMP");
 	Adventurers mage(1, 10, 10, 50, 50, "Place Holder", "Mage");
+	Adventurers knight(1, 50, 50, 10, 10, "White Knight", "Knight");
 
 	Areas tempArea("DEFAULT", 0);
 	Areas energySprings("Energy Springs", 1);
@@ -166,6 +168,7 @@ int main(){
 	energySprings.addPossibleIngredient(pureWater);
 
 	energySprings.addPossibleItem(lessManaPotion);
+	energySprings.addPossibleItem(lessHealPotion);
 
 	player.learnIngredient(rejuvHerb);
 	player.learnIngredient(energyHerb);
@@ -174,6 +177,7 @@ int main(){
 	player.learnItem(lessHealPotion);
 
 	player.recruitAdventurer(mage);
+	player.recruitAdventurer(knight);
 
 	player.unlockArea(energySprings);
 
@@ -278,7 +282,7 @@ int main(){
 				}
 			}
 			//Checks if the mouse is over a clickable object if the left mouse button is pressed.
-			if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+			if ((event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) || recheckTavern == true) {
 				if (level == 0) {
 					//Takes the player to the Crafting Method Selector.
 					if (startCrafting.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
@@ -369,6 +373,7 @@ int main(){
 					}
 				}
 				else if (level == 4) {
+
 					//Takes the player to the main menu.
 					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 0;
@@ -389,42 +394,112 @@ int main(){
 						levelIndicator.setString("Area selection");
 						cursor.setPosition(15, 107.5);
 					}
-					else if (collectItems.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+					else if (spendTime.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						playerShop.addProgress();
+						for each (Adventurers adventurer in player.getRecruitedAdventurers()) {
+							if (adventurer.getAssignedArea().getName() != "DEFAULT") {
+								tavern = player.addAdventurerProgress(player.locate(adventurer.getName()), tavern);
+							}
+						}
+					}
+					//Adds the adventurer's items to the player's inventory.
+					else if (collectItems.isOverlapping(event.mouseButton.x, event.mouseButton.y) || recheckTavern == true) {
 						int position = 0;
-						int rejuvHerb = 0;
-						int energyHerb = 0;
-						int pureWater = 0;
-						tavern.displayIngredients();
+						int i_rejuvHerb = 0;
+						int i_energyHerb = 0;
+						int i_pureWater = 0;
+						int i_lessHealPotion = 0;
+						int i_lessManaPotion = 0;
+						//Fetching ingredients.
 						for each (Ingredients ingredient in tavern.getIngredientsHeld()) {
 							if (ingredient.getName() == "Rejuvenation Herbs")
-								rejuvHerb++;
+								i_rejuvHerb++;
 							else if (ingredient.getName() == "Energy-Filled Herbs")
-								energyHerb++;
+								i_energyHerb++;
 							else if (ingredient.getName() == "Purified Water")
-								pureWater++;
+								i_pureWater++;
 							else {
 								string errorMessage = "An unknown ingredient was found: " + ingredient.getName();
 								printError(errorMessage.c_str());
 							}
-							cout << "HEy";
+							
 						}
-						if (rejuvHerb != 0) {
+						cout << "Ingredients: " + to_string(i_rejuvHerb) + ", " + to_string(i_energyHerb) + ", " + to_string(i_pureWater) << endl;
+						if (i_rejuvHerb != 0) {
 							position = player.locate("Rejuvenation Herbs");
 							if (position != 5000)
-								player.updateIngredientInventory(Ingredients("Rejuvenation Herbs", player.getIngredientInventory().at(position).getAmount() + rejuvHerb));
-							else
-								player.updateIngredientInventory(Ingredients("Rejuvenation Herbs", rejuvHerb));
-							rejuvHerb = 0;
+								tempIngredient = Ingredients("Rejuvenation Herbs", player.getIngredientInventory().at(position).getAmount() + i_rejuvHerb);
+							else {
+								tempIngredient = rejuvHerb;
+								tempIngredient.setAmount(i_rejuvHerb);
+							}
+							tavern.deleteIngredients("Rejuvenation Herbs");
+							updateIngredient = true;
+							recheckTavern = true;
+							break;
 						}
-						if (energyHerb != 0) {
+						if (i_energyHerb != 0) {
 							position = player.locate("Energy-Filled Herbs");
 							if (position != 5000)
-								player.updateIngredientInventory(Ingredients("Energy-Filled Herbs", player.getIngredientInventory().at(position).getAmount() + energyHerb));
-							else
-								player.updateIngredientInventory(Ingredients("Energy-Filled Herbs", energyHerb));
-							energyHerb = 0;
+								tempIngredient = Ingredients("Energy-Filled Herbs", player.getIngredientInventory().at(position).getAmount() + i_energyHerb);
+							else {
+								tempIngredient = energyHerb;
+								tempIngredient.setAmount(i_energyHerb);
+							}
+							tavern.deleteIngredients("Energy-Filled Herbs");
+							updateIngredient = true;
+							recheckTavern = true;
+							break;
 						}
-						cout << "New items: " + to_string(rejuvHerb) + ", " + to_string(energyHerb) + ", " + to_string(pureWater);
+						if (i_pureWater != 0){
+							position = player.locate("Purified Water");
+							if (position != 5000)
+								tempIngredient = Ingredients("Purified Water", player.getIngredientInventory().at(position).getAmount() + i_pureWater);
+							else {
+								tempIngredient = pureWater;
+								tempIngredient.setAmount(i_pureWater);
+							}
+							tavern.deleteIngredients("Purified Water");
+							updateIngredient = true;
+							recheckTavern = true;
+							break;
+						}
+
+						//Fetching items.
+						for each (Items item in tavern.getItemsHeld()) {
+							if (item.getName() == "Lesser Mana Potion")
+								i_lessManaPotion++;
+							else if (item.getName() == "Lesser Healing Potion")
+								i_lessHealPotion++;
+						}
+						cout << "Items: " + to_string(i_lessManaPotion) + ", " + to_string(i_lessHealPotion) << endl;
+						if (i_lessManaPotion != 0) {
+							position = player.locate("Lesser Mana Potion");
+							if (position != 5000)
+								tempItem = Items("Lesser Mana Potion", player.getItemInventory().at(position).getAmount() + i_lessManaPotion, player.getItemInventory().at(position).getPrice(), player.getItemInventory().at(position).getThereshold(), player.getItemInventory().at(position).isRecipeKnown());
+							else {
+								tempItem = lessManaPotion;
+								tempItem.setAmount(i_lessManaPotion);
+							}
+							tavern.deleteItems("Lesser Mana Potion");
+							updateItem = true;
+							recheckTavern = true;
+							break;
+						}
+						if (i_lessHealPotion != 0) {
+							position = player.locate("Lesser Healing Potion");
+							if (position != 5000)
+								tempItem = Items("Lesser Healing Potion", player.getItemInventory().at(position).getAmount() + i_lessHealPotion, player.getItemInventory().at(position).getPrice(), player.getItemInventory().at(position).getThereshold(), player.getItemInventory().at(position).isRecipeKnown());
+							else {
+								tempItem = lessHealPotion;
+								tempItem.setAmount(i_lessHealPotion);
+							}
+							tavern.deleteItems("Lesser Healing Potion");
+							updateItem = true;
+							recheckTavern = true;
+							break;
+						}
+						recheckTavern = false;
 					}
 				}
 				else if (level == 6) {
@@ -706,12 +781,15 @@ string generateAdventurerList(Player player, Areas area) {
 	newList = "What adventurer would you like to send to " + area.getName() + "?\n\n";
 
 	for each(Adventurers adventurer in player.getRecruitedAdventurers()) {
+		newList += adventurer.getName() + ". ATK: " + to_string(adventurer.getAttack()) + ". DEF: " + to_string(adventurer.getDefense()) + ". M.ATK: " + to_string(adventurer.getMagicAttack()) + ". M.DEF: " + to_string(adventurer.getMagicDefense()) + ". ";
+
 		if (adventurer.getAssignedArea().getName() == "DEFAULT") {
-			newList += adventurer.getName() + ". ATK: " + to_string(adventurer.getAttack()) + ". DEF: " + to_string(adventurer.getDefense()) + ". M.ATK: " + to_string(adventurer.getMagicAttack()) + ". M.DEF: " + to_string(adventurer.getMagicDefense()) + ".\n";
+			newList += "(FREE)";
 		}
+		else
+			newList += "(BUSY)";
+		newList += "\n";
 	}
-	if (newList == "What adventurer would you like to send to " + area.getName() + "?\n\n")
-		newList += "You don't have any free adventurers!";
 	return newList;
 }
 

@@ -33,6 +33,7 @@ Tavern Adventurers::addProgress(Tavern tavern){
 				}
 			}
 		}
+		resetProgress();
 		assignArea(Areas("DEFAULT", 0));
 	}
 	return tavern;
