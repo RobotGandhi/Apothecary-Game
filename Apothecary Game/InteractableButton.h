@@ -14,9 +14,7 @@ public:
 	void changeTextColor(Color newColor) {
 		buttonLabel.setFillColor(newColor);
 	}
-	void changeString(string newString) {
-		buttonLabel.setString(newString);
-	}
+	void changeString(string newString);
 
 	float left() {
 		return button.getPosition().x;

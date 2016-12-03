@@ -15,6 +15,12 @@ InteractableButton::InteractableButton(int a_xSize, int a_ySize, int a_xPos, int
 	buttonLabel.setPosition(a_xPos + (a_xSize / 2), a_yPos + (a_ySize / 2));
 }
 
+void InteractableButton::changeString(string newString) {
+	buttonLabel.setString(newString);
+	buttonLabel.setOrigin(buttonLabel.getLocalBounds().left + buttonLabel.getLocalBounds().width / 2,
+		buttonLabel.getLocalBounds().top + buttonLabel.getLocalBounds().height / 2);
+}
+
 bool InteractableButton::isOverlapping(int x_pos, int y_pos){
 	if (x_pos >= left() && x_pos <= right() && y_pos >= top() && y_pos <= bottom())
 		return true;

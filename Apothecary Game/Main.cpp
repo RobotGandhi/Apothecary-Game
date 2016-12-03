@@ -43,7 +43,7 @@ int main(){
 	//Defines the color used when hovering over buttons.
 	Color buttonShade(101, 94, 0);
 	Color buttonDefault(178, 164, 0);
-	Color textShade(216, 120, 31);
+	Color textBrighten(216, 120, 31);
 	Color textDefault(63, 31, 1);
 
 	Texture cursorTexture;
@@ -80,48 +80,48 @@ int main(){
 	Text ingredientList;
 	ingredientList.setFont(fontAntiqua);
 	ingredientList.setCharacterSize(25);
-	ingredientList.setFillColor(textDefault);
+	ingredientList.setFillColor(textBrighten);
 
 	Text itemList;
 	itemList.setFont(fontAntiqua);
 	itemList.setCharacterSize(25);
-	itemList.setFillColor(textDefault);
+	itemList.setFillColor(textBrighten);
 
 	Text adventurerList;
 	adventurerList.setFont(fontAntiqua);
 	adventurerList.setCharacterSize(25);
-	adventurerList.setFillColor(textDefault);
+	adventurerList.setFillColor(textBrighten);
 	adventurerList.setPosition(45, 45);
 
 	Text shopItems;
 	shopItems.setFont(fontAntiqua);
 	shopItems.setCharacterSize(25);
-	shopItems.setFillColor(textDefault);
+	shopItems.setFillColor(textBrighten);
 	shopItems.setPosition(45, 45);
 	
 	Text areaList;
 	areaList.setFont(fontAntiqua);
 	areaList.setCharacterSize(25);
-	areaList.setFillColor(textDefault);
+	areaList.setFillColor(textBrighten);
 	areaList.setPosition(45, 45);
 
 	Text displayMoney;
 	displayMoney.setFont(fontAntiqua);
 	displayMoney.setCharacterSize(25);
-	displayMoney.setFillColor(textDefault);
+	displayMoney.setFillColor(textBrighten);
 	displayMoney.setPosition(1000, 10);
 
 	Text displayShopMoney;
 	displayShopMoney.setFont(fontAntiqua);
 	displayShopMoney.setCharacterSize(25);
-	displayShopMoney.setFillColor(textDefault);
+	displayShopMoney.setFillColor(textBrighten);
 	displayShopMoney.setPosition(45, 10);
 
 	Text levelIndicator;
 	levelIndicator.setFont(fontAntiqua);
 	levelIndicator.setCharacterSize(25);
-	levelIndicator.setFillColor(textDefault);
-	levelIndicator.setPosition(540, 10);
+	levelIndicator.setFillColor(textBrighten);
+	levelIndicator.setPosition(640, 25);
 
 	//A variable used for checking which screen the player is on.
 	int level = 0;
@@ -193,91 +193,169 @@ int main(){
 				if (level == 0){
 					if (startCrafting.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						startCrafting.changeButtonColor(buttonShade);
-						startCrafting.changeTextColor(textShade);
+						startCrafting.changeTextColor(textBrighten);
 					}
 					else if (enterTavern.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						enterTavern.changeButtonColor(buttonShade);
-						enterTavern.changeTextColor(textShade);
+						enterTavern.changeTextColor(textBrighten);
 					}
 					else if (enterShop.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						enterShop.changeButtonColor(buttonShade);
-						enterShop.changeTextColor(textShade);
+						enterShop.changeTextColor(textBrighten);
 					}
 					else{
 						enterShop.changeButtonColor(buttonDefault);
-						enterTavern.changeButtonColor(buttonDefault);
-						startCrafting.changeButtonColor(buttonDefault);
 						enterShop.changeTextColor(textDefault);
+						enterTavern.changeButtonColor(buttonDefault);
 						enterTavern.changeTextColor(textDefault);
+						startCrafting.changeButtonColor(buttonDefault);
 						startCrafting.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 1){
 					if (experiment.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						experiment.changeButtonColor(buttonShade);
+						experiment.changeTextColor(textBrighten);
 					}
 					else if (craftFromRecipe.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						craftFromRecipe.changeButtonColor(buttonShade);
+						craftFromRecipe.changeTextColor(textBrighten);
 					}
 					else if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
 					}
 					else {
 						experiment.changeButtonColor(buttonDefault);
+						experiment.changeTextColor(textDefault);
 						craftFromRecipe.changeButtonColor(buttonDefault);
+						craftFromRecipe.changeTextColor(textDefault);
 						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 2){
 					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
+					}
+					else if (resetCrafting.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						resetCrafting.changeButtonColor(buttonShade);
+						resetCrafting.changeTextColor(textBrighten);
 					}
 					else if ((confirmCrafting.isOverlapping(event.mouseMove.x, event.mouseMove.y))) {
 						confirmCrafting.changeButtonColor(buttonShade);
+						confirmCrafting.changeTextColor(textBrighten);
 					}
 					else {
 						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
+						resetCrafting.changeButtonColor(buttonDefault);
+						resetCrafting.changeTextColor(textDefault);
 						confirmCrafting.changeButtonColor(buttonDefault);
+						confirmCrafting.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 3) {
 					if (startSale.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						startSale.changeButtonColor(buttonShade);
+						startSale.changeTextColor(textBrighten);
 					}
 					else if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
 					}
 					else if (collectMoney.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						collectMoney.changeButtonColor(buttonShade);
+						collectMoney.changeTextColor(textBrighten);
 					}
 					else {
 						startSale.changeButtonColor(buttonDefault);
+						startSale.changeTextColor(textDefault);
 						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
 						collectMoney.changeButtonColor(buttonDefault);
+						collectMoney.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 4) {
 					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
 					}
 					else {
 						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 5) {
 					if (sendAdventurers.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						sendAdventurers.changeButtonColor(buttonShade);
+						sendAdventurers.changeTextColor(textBrighten);
+					}
+					else if (spendTime.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						spendTime.changeButtonColor(buttonShade);
+						spendTime.changeTextColor(textBrighten);
+					}
+					else if (collectItems.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						collectItems.changeButtonColor(buttonShade);
+						collectItems.changeTextColor(textBrighten);
+					}
+					else if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
 					}
 					else {
 						sendAdventurers.changeButtonColor(buttonDefault);
+						sendAdventurers.changeTextColor(textDefault);
+						spendTime.changeButtonColor(buttonDefault);
+						spendTime.changeTextColor(textDefault);
+						collectItems.changeButtonColor(buttonDefault);
+						collectItems.changeTextColor(textDefault);
+						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
 					}
 				}
 				else if (level == 6) {
 					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
 						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
+					}
+					else if (confirm.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						confirm.changeButtonColor(buttonShade);
+						confirm.changeTextColor(textBrighten);
 					}
 					else {
 						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
+						confirm.changeButtonColor(buttonDefault);
+						confirm.changeTextColor(textDefault);
+					}
+				}
+				else if (level == 7) {
+					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
+					}
+					else if (confirm.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						confirm.changeButtonColor(buttonShade);
+						confirm.changeTextColor(textDefault);
+					}
+					else {
+						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
+						confirm.changeButtonColor(buttonDefault);
+						confirm.changeTextColor(textDefault);
+					}
+				}
+				else if (level == 8) {
+					if (returnToMenu.isOverlapping(event.mouseMove.x, event.mouseMove.y)) {
+						returnToMenu.changeButtonColor(buttonShade);
+						returnToMenu.changeTextColor(textBrighten);
+					}
+					else {
+						returnToMenu.changeButtonColor(buttonDefault);
+						returnToMenu.changeTextColor(textDefault);
 					}
 				}
 			}
@@ -293,6 +371,10 @@ int main(){
 					else if (enterTavern.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
 						level = 5;
 						levelIndicator.setString("The Tavern");
+						if (tavern.getIngredientsHeld().size() + tavern.getItemsHeld().size() > 0)
+							collectItems.changeString("Collect items");
+						else
+							collectItems.changeString("No items to collect");
 					}
 					//Takes the player to their shop.
 					else if (enterShop.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
@@ -310,6 +392,15 @@ int main(){
 						levelIndicator.setString("Experimentation");
 						ingredientList.setPosition(45, 15);
 						itemList.setPosition(500, 75);
+						cursor.setPosition(15, 77.5);
+					}
+					//Takes the player to the recipe crafting area and sets the lists up.
+					else if (craftFromRecipe.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						oldCursorPosition = 0;
+						newCursorPosition = 0;
+						level = 8;
+						levelIndicator.setString("Crafting from recipe");
+						itemList.setPosition(45, 75);
 						cursor.setPosition(15, 77.5);
 					}
 					//Takes the player to the main menu.
@@ -401,13 +492,19 @@ int main(){
 								tavern = player.addAdventurerProgress(player.locate(adventurer.getName()), tavern);
 							}
 						}
+						if (tavern.getIngredientsHeld().size() + tavern.getItemsHeld().size() > 0)
+							collectItems.changeString("Collect items");
 					}
 					//Adds the adventurer's items to the player's inventory.
 					else if (collectItems.isOverlapping(event.mouseButton.x, event.mouseButton.y) || recheckTavern == true) {
 						int position = 0;
+
+						int i_ingredients = 0;
 						int i_rejuvHerb = 0;
 						int i_energyHerb = 0;
 						int i_pureWater = 0;
+
+						int i_items = 0;
 						int i_lessHealPotion = 0;
 						int i_lessManaPotion = 0;
 						//Fetching ingredients.
@@ -422,9 +519,27 @@ int main(){
 								string errorMessage = "An unknown ingredient was found: " + ingredient.getName();
 								printError(errorMessage.c_str());
 							}
-							
+							i_ingredients++;
 						}
+						//Fetching items.
+						for each (Items item in tavern.getItemsHeld()) {
+							if (item.getName() == "Lesser Healing Potion")
+								i_lessHealPotion++;
+							else if (item.getName() == "Lesser Mana Potion")
+								i_lessManaPotion++;
+							else {
+								string errorMessage = "An unknown item was found: " + item.getName();
+								printError(errorMessage.c_str());
+							}
+							i_items++;
+						}
+
 						cout << "Ingredients: " + to_string(i_rejuvHerb) + ", " + to_string(i_energyHerb) + ", " + to_string(i_pureWater) << endl;
+						cout << "Items: " + to_string(i_lessHealPotion) + ", " + to_string(i_lessManaPotion) << endl;
+
+						if (recheckTavern == false)
+							collectItems.changeString(to_string(i_ingredients) + " ingredients and " + to_string(i_items) + " items obtained!");
+
 						if (i_rejuvHerb != 0) {
 							position = player.locate("Rejuvenation Herbs");
 							if (position != 5000)
@@ -464,28 +579,6 @@ int main(){
 							recheckTavern = true;
 							break;
 						}
-
-						//Fetching items.
-						for each (Items item in tavern.getItemsHeld()) {
-							if (item.getName() == "Lesser Mana Potion")
-								i_lessManaPotion++;
-							else if (item.getName() == "Lesser Healing Potion")
-								i_lessHealPotion++;
-						}
-						cout << "Items: " + to_string(i_lessManaPotion) + ", " + to_string(i_lessHealPotion) << endl;
-						if (i_lessManaPotion != 0) {
-							position = player.locate("Lesser Mana Potion");
-							if (position != 5000)
-								tempItem = Items("Lesser Mana Potion", player.getItemInventory().at(position).getAmount() + i_lessManaPotion, player.getItemInventory().at(position).getPrice(), player.getItemInventory().at(position).getThereshold(), player.getItemInventory().at(position).isRecipeKnown());
-							else {
-								tempItem = lessManaPotion;
-								tempItem.setAmount(i_lessManaPotion);
-							}
-							tavern.deleteItems("Lesser Mana Potion");
-							updateItem = true;
-							recheckTavern = true;
-							break;
-						}
 						if (i_lessHealPotion != 0) {
 							position = player.locate("Lesser Healing Potion");
 							if (position != 5000)
@@ -495,6 +588,19 @@ int main(){
 								tempItem.setAmount(i_lessHealPotion);
 							}
 							tavern.deleteItems("Lesser Healing Potion");
+							updateItem = true;
+							recheckTavern = true;
+							break;
+						}
+						if (i_lessManaPotion != 0) {
+							position = player.locate("Lesser Mana Potion");
+							if (position != 5000)
+								tempItem = Items("Lesser Mana Potion", player.getItemInventory().at(position).getAmount() + i_lessManaPotion, player.getItemInventory().at(position).getPrice(), player.getItemInventory().at(position).getThereshold(), player.getItemInventory().at(position).isRecipeKnown());
+							else {
+								tempItem = lessManaPotion;
+								tempItem.setAmount(i_lessManaPotion);
+							}
+							tavern.deleteItems("Lesser Mana Potion");
 							updateItem = true;
 							recheckTavern = true;
 							break;
@@ -531,6 +637,13 @@ int main(){
 							levelIndicator.setString("Main Menu");
 							updateArea = true;
 						}
+					}
+				}
+				else if (level == 8) {
+					//Takes the player to the main menu.
+					if (returnToMenu.isOverlapping(event.mouseButton.x, event.mouseButton.y)) {
+						level = 0;
+						levelIndicator.setString("Main Menu");
 					}
 				}
 			}
@@ -647,9 +760,12 @@ int main(){
 		shopItems.setString(generateSaleList(playerShop));
 		areaList.setString(generateAreaList(player));
 		displayMoney.setString("Currency: " + to_string(player.getMoney()));
+		levelIndicator.setOrigin(levelIndicator.getLocalBounds().left + levelIndicator.getLocalBounds().width / 2,
+			levelIndicator.getLocalBounds().top + levelIndicator.getLocalBounds().height / 2);
 		//Clear the window of what it's currently showing, then redraw the objects and display the new frame.
 		mainWindow.clear(Color::Black);
 		mainWindow.draw(displayMoney);
+		mainWindow.draw(levelIndicator);
 		switch (level){
 		case 0:
 			//Main screen
@@ -728,6 +844,13 @@ int main(){
 			mainWindow.draw(adventurerList);
 			mainWindow.draw(cursor);
 			break;
+		case 8:
+			//Crafting from recipe
+			mainWindow.draw(returnToMenu.getButton());
+			mainWindow.draw(returnToMenu.getLabel());
+			mainWindow.draw(itemList);
+			mainWindow.draw(cursor);
+			break;
 		default:
 			//Level does not exist
 			if (levelErrorPrinted == false){
@@ -737,7 +860,6 @@ int main(){
 			}
 			break;
 		}
-		mainWindow.draw(levelIndicator);
 		mainWindow.display();
 	}
 	return 0;

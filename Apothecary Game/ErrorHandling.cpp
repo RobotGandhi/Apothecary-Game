@@ -5,8 +5,6 @@
 
 using namespace std;
 
-string currentDateTime();
-
 void printError(const char errorMessage[1000]){
 	//Attempts to open the error log.
 	ofstream errorFile;
@@ -16,17 +14,7 @@ void printError(const char errorMessage[1000]){
 	if (!errorFile.is_open())
 		cout << "The error file could not be opened." << endl;
 	else{
-		errorFile << currentDateTime() << ": " << errorMessage << endl;
+		errorFile << errorMessage << endl;
 		errorFile.close();
 	}
-}
-
-string currentDateTime() {
-	//Used to display the current date and time.
-	time_t t = time(0);
-
-	struct tm * now = NULL;
-	localtime_s(now, &t);
-	string dateTime = to_string(now->tm_year + 1900) + "-" + to_string(now->tm_mon + 1) + "-" + to_string(now->tm_mday) + " " + to_string(now->tm_hour) + ":" + to_string(now->tm_min) + ":" + to_string(now->tm_sec);
-	return dateTime;
 }
